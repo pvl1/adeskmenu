@@ -3,7 +3,9 @@
 
 MENU_WIDTH = 580
 MENU_HEIGHT = 380
-
+# By default adeskmenu will open in the center. Anything other than 0
+# opens at mouse position
+MENU_POSITION=0
 import os
 import sys
 import gtk
@@ -332,7 +334,10 @@ class Menu():
             self.window.hide()
 
     def show_menu(self, mode=None):
-        self.window.set_position(gtk.WIN_POS_MOUSE)
+        if MENU_POSITION == 0:
+            self.window.set_position(gtk.WIN_POS_CENTER)
+        else:
+            self.window.set_position(gtk.WIN_POS_MOUSE)
         self.window.grab_focus()
 
     def lost_focus(self, widget, event):
@@ -381,34 +386,35 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
         if sys.argv[1] == '-s':
             write_config()
+            sys.exit()
         elif sys.argv[1] == '-t':
-            cmd = "kill -10 `cat ~/.config/adesk-menu/pid`"
-            os.system(cmd)
+            #cmd = "kill -10 `cat ~/.config/adesk-menu/pid`"
+            #cmd = "kill -INT `cat ~/.config/adesk-menu/pid`"
+            #if os.system(cmd):
+                MENU_POSITION=1
         else:
             print "Unknow option .."
             print "Usage : adesk-menu [-s|-t]"
             print " -s : save menu list ( ~/.config/adesk-menu/config )"
             print " -t : show menu ( cursor position )"
-    else: 
-        if os.system("kill -INT `cat ~/.config/adesk-menu/pid`"):
-            global g_menu
-            signal.signal(signal.SIGINT, signal_handler)
-            save_pid()
-    
-            ## need to change directory
-            SRC_PATH = os.path.dirname(os.path.realpath( __file__ ))
-            os.chdir(SRC_PATH)
-    
-            g_menu = Menu()
-            # change directory to Home
-            os.chdir(os.getenv('HOME'))
-            g_menu.hide_me = False
-            g_menu.show_menu(g_menu.mode)
-            g_menu.window.show()
-            g_menu.focus_check = True
-            # Set focus to current window
-            g_menu.window.present()
-            g_menu.run()
-        else:
             sys.exit()
-            
+        
+    os.system("kill -INT `cat ~/.config/adesk-menu/pid`")
+    global g_menu
+    signal.signal(signal.SIGINT, signal_handler)
+    save_pid()
+
+    ## need to change directory
+    SRC_PATH = os.path.dirname(os.path.realpath( __file__ ))
+    os.chdir(SRC_PATH)
+
+    g_menu = Menu()
+    # change directory to Home
+    os.chdir(os.getenv('HOME'))
+    g_menu.hide_me = False
+    g_menu.show_menu(g_menu.mode)
+    g_menu.window.show()
+    g_menu.focus_check = True
+    # Set focus to current window
+    g_menu.window.present()
+    g_menu.run()            
