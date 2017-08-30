@@ -1,6 +1,7 @@
 Adesk Menu
 =========
-[[https://i.imgur.com/pwsbkXC.png|alt=screenshot]]
+
+![screenshot](https://i.imgur.com/pwsbkXC.png)
  ADesk Menu
    - v0.4 : set default menu position to bottom left, just above the panel
    			prevent window display on taskbar
